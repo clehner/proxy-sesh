@@ -5,8 +5,9 @@ class SeshRoutes
     @seshs.load()
 
   index: (req, res) =>
+    json = JSON.stringify(@seshs.toJSON())
     res.render 'index',
-      seshsJSON: @seshs.toJSON().replace(/<\/script>/g, '</"+"script>')
+      seshsJSON: json.replace(/<\/script>/g, '</"+"script>')
 
   seshRequest: (req, res) =>
     host = req.headers.host
@@ -26,18 +27,18 @@ class SeshRoutes
       script: req.body.script
       host: req.body.host
     @seshs.add(sesh)
-    res.send
+    res.jsonp
       subdomain: sesh.subdomain
 
   getSeshs: (req, res) =>
-    res.send(@seshs.toJSON())
+    res.jsonp(@seshs.toJSON())
 
   deleteSesh: (req, res) =>
     sesh = @seshs.get(req.params.id)
     if sesh
       @seshs.remove(sesh)
-      res.send(true)
+      res.jsonp(true)
     else
-      res.send(false)
+      res.jsonp(false)
 
 module.exports = SeshRoutes

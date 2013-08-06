@@ -2,13 +2,11 @@ fs = require 'fs'
 Sesh = require './sesh'
 
 class SeshsStorage
-  json: '[]'
-
   constructor: ({@fileName, @domain}) ->
     @all = []
     @bySubdomain = {}
 
-  toJSON: -> @json
+  toJSON: -> @all
 
   add: (sesh) ->
     @all.push(sesh)
@@ -24,20 +22,19 @@ class SeshsStorage
     @bySubdomain[subdomain]
 
   save: ->
-    @json = JSON.stringify(@all)
-    fs.writeFile @fileName, @json, (err) ->
+    json = JSON.stringify(@all)
+    fs.writeFile @fileName, json, (err) ->
       throw err if err
 
   load: ->
-    fs.readFile @fileName, encoding: 'ascii', (err, @json) =>
+    fs.readFile @fileName, encoding: 'ascii', (err, json) =>
       throw err if err
       try
-        @all = JSON.parse(@json).map (opt) =>
+        @all = JSON.parse(json).map (opt) =>
           opt.domain = @domain
           new Sesh opt
       catch err
         @all = []
-        @json = '[]'
       for sesh in @all
         @bySubdomain[sesh.subdomain] = sesh
 

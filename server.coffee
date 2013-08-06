@@ -39,10 +39,15 @@ main.use('/public', express.static("#{ __dirname }/public"))
 main.set('view engine', 'ejs')
 
 main.get('/', routes.index)
+
 main.get('/seshs', routes.getSeshs)
 main.post('/seshs', routes.createSesh)
 main.put('/seshs', routes.createSesh)
 main.delete('/seshs/:id', routes.deleteSesh)
+
+# jsonp
+main.get('/seshs/create', routes.createSesh)
+main.get('/seshs/:id/delete', routes.deleteSesh)
 
 server.listen(argv.port, argv.host)
 console.log "listening on #{ argv.host }:#{ argv.port }"
